@@ -17,13 +17,10 @@ router = Router()
 
 @router.message(Command("predict"))
 async def predict_handler(msg: Message):
-
-
-    # text_from_message = msg.text.lower().replace("/predict ", "")
-
-    # text_from_message = [x.split("-") for x in text_from_message.split(",")]
+    """
+    Predict.
+    """
     dict_from_message = {}
-    # dict_from_message["song_list"] = [{"artist": x[0], "name": x[1]} for x in text_from_message]
     dict_from_message["song_list"] = string_preproseccing(msg, "predict")
 
     async with aiohttp.ClientSession() as session:
@@ -56,11 +53,10 @@ async def predict_handler(msg: Message):
 
 
 @router.message(Command("search"))
-async def predict_handler(msg: Message):
-    # text_from_message = msg.text.lower().replace("/search ", "")
-
-    # text_from_message = [x.split("-") for x in text_from_message.split(",")]
-    # user_songs = [{"artist": x[0], "name": x[1]} for x in text_from_message]
+async def search_handler(msg: Message):
+    """
+    Search.
+    """
     user_songs = string_preproseccing(msg, cmd="search")
 
     async with aiohttp.ClientSession() as session:
