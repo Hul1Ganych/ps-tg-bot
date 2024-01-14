@@ -9,9 +9,9 @@ TEXT_FOR_INFO = """
 🎼/predict <artist_name - track>, <...> - get recommendation by song name
 Note: input only {artist name - track name} and use comma to separate tracks!
 
-🔍/search - search in Spotify tracks
+🔍/search <artist_name - track>, <...> - search in Spotify tracks
 
-📑/describe - describe Spotify tracks
+📑/describe <artist_name - track>, <...> - describe Spotify tracks
 
 ⭐/rate - rate our service
 
