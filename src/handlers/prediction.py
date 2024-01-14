@@ -84,6 +84,8 @@ async def describe_handler(message: types.Message, command: CommandObject):
     """
 
     def _format_song_info(song):
+        seconds = song["duration_ms"] // 1000
+        minutes = seconds // 60
         song_info = {
             "<b>Artists</b>": ", ".join(song["artist_name"]),
             "<b>Name</b>": song["track_name"],
@@ -91,6 +93,7 @@ async def describe_handler(message: types.Message, command: CommandObject):
             "<b>Release date</b>": song["album_release_date"],
             "<b>Genres</b>": ", ".join(song["genres"]),
             "<b>Popularity</b>": song["popularity"],
+            "<b>Duration</b>": f"{str(minutes).zfill(2)}:{seconds % 60}",
         }
         return "\n".join([f"{k}: {v}" for k, v in song_info.items()]) + "\n"
 
