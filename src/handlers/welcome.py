@@ -21,7 +21,7 @@ async def start_handler(message: types.Message):
 
 @router.message(F.text, Command("info"))
 async def message_info(message: types.Message):
-    await message.answer(text.TEXT_FOR_INFO)
+    await message.answer(**Text(text.TEXT_FOR_INFO).as_kwargs())
 
 
 @router.message(F.text, Command("about"))
@@ -34,3 +34,8 @@ async def message_redicrect(message: types.Message):
     await message.answer(
         f"Use the full version of Playlist Selection service on: \n {config.service_uri}"
     )
+
+
+@router.message(F.text, Command("donate"))
+async def donate_handler(message: types.Message):
+    await message.answer("Not available yet, save your money!")
