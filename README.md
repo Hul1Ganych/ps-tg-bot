@@ -1,17 +1,23 @@
 # Telegram bot for Playlist Selection App
 
+This bot implements Playlist Selection interface App with some additional
+features.
+
 ## Available commands
 
-1. `/info` - show info about available commands
+`/info` - show info about available commands
 
-2. `/about` - more info about project
+`/about` - more info about project
 
-3. `/rate` - rate our service
+`/rate` - rate our service
 
-4. `/redirect` - get url to service website
+`/redirect` - get url to service website
 
-5. `/search` - search in Spotify tracks ![Alt text](image.png)
+`/search` - search in Spotify tracks
+![Alt text](https://1drv.ms/i/s!AhNDMGPUPzEr0juSZo8hEckTV1y-?e=8t8fab)
 
-6. `/describe` - describe Spotify tracks ![Alt text](image-1.png)
+`/describe` - describe Spotify tracks
+![Alt text](https://1drv.ms/i/s!AhNDMGPUPzEr0j1ZYESVLhH-kw0-?e=u0YLcg)
 
-7. `/predict` - get service recomendations ![Alt text](image-2.png)
+`/predict` - get service recomendations
+![Alt text](https://1drv.ms/i/s!AhNDMGPUPzEr0jwKKhafhcpcMfKY?e=IFzPQH)
