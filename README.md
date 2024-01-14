@@ -14,10 +14,12 @@ features.
 `/redirect` - get url to service website
 
 `/search` - search in Spotify tracks
-![Alt text](blob:https://photos.onedrive.com/097d9469-327e-4c7e-9cf9-6419633443d4)
+![image](https://github.com/Hul1Ganych/ps-tg-bot/assets/56652212/cf7ed1be-0824-4e81-a195-70344c48e7c0)
 
 `/describe` - describe Spotify tracks
-![Alt text](blob:https://photos.onedrive.com/d3f8cf34-b6f5-402d-b2cc-50f0875cb8c7)
+![image](https://github.com/Hul1Ganych/ps-tg-bot/assets/56652212/e167c1ce-dcb5-4678-b8fe-a5316f667b89)
+
 
 `/predict` - get service recomendations
-![Alt text](blob:https://photos.onedrive.com/347acbfc-7d87-40d4-b85f-727e5c91503d)
+![image](https://github.com/Hul1Ganych/ps-tg-bot/assets/56652212/9a97ab17-54d7-4f31-b0fa-3194905cd3a1)
+
