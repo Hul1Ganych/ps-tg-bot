@@ -23,11 +23,15 @@ async def predict_handler(message: types.Message, command: CommandObject):
     Handler for predict command.
 
     Args:
-        msg: Telegram message instance
+        message: Telegram message instance
     """
-    dict_from_message = {
-        "song_list": preprocess_string(command.args),
-    }
+    try:
+        dict_from_message = {
+            "song_list": preprocess_string(command.args),
+        }
+    except ValueError as err:
+        await message.answer(str(err))
+        return
 
     async with aiohttp.ClientSession() as session:
         generate_uri = os.path.join(str(config.service_uri), "api/generate")
@@ -60,9 +64,13 @@ async def search_handler(message: types.Message, command: CommandObject):
     Handler for search command.
 
     Args:
-        msg: Telegram message instance
+        message: Telegram message instance
     """
-    user_songs = preprocess_string(command.args)
+    try:
+        user_songs = preprocess_string(command.args)
+    except ValueError as err:
+        await message.answer(str(err))
+        return
 
     async with aiohttp.ClientSession() as session:
         search_uri = os.path.join(str(config.service_uri), "api/search")

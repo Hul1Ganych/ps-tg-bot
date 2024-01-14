@@ -1,7 +1,10 @@
+"""Module with text infos used in bot."""
+
+
 TEXT_FOR_INFO = """
 🧐/about - more info about project
 
-🎼/predict artist name - track, ... - get recommendation by song name
+🎼/predict <artist_name - track>, <...> - get recommendation by song name
 Note: input only {artist name - track name} and use comma to separate tracks!
 
 🔍/search - search in Spotify tracks
