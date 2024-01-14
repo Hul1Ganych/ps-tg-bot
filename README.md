@@ -14,10 +14,10 @@ features.
 `/redirect` - get url to service website
 
 `/search` - search in Spotify tracks
-![Alt text](https://1drv.ms/i/s!AhNDMGPUPzEr0juSZo8hEckTV1y-?e=8t8fab)
+![Alt text](blob:https://photos.onedrive.com/097d9469-327e-4c7e-9cf9-6419633443d4)
 
 `/describe` - describe Spotify tracks
-![Alt text](https://1drv.ms/i/s!AhNDMGPUPzEr0j1ZYESVLhH-kw0-?e=u0YLcg)
+![Alt text](blob:https://photos.onedrive.com/d3f8cf34-b6f5-402d-b2cc-50f0875cb8c7)
 
 `/predict` - get service recomendations
-![Alt text](https://1drv.ms/i/s!AhNDMGPUPzEr0jwKKhafhcpcMfKY?e=IFzPQH)
+![Alt text](blob:https://photos.onedrive.com/347acbfc-7d87-40d4-b85f-727e5c91503d)
