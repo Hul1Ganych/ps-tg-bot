@@ -4,16 +4,25 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from aiogram.enums.parse_mode import ParseMode
-from aiogram.utils.formatting import Text, as_list, as_marked_list
+from aiogram.utils.formatting import Bold, Text, as_list, as_marked_list
 from aiogram.utils.markdown import hlink
 
-from src.handlers.prediction import describe_handler, search_handler
+from configs.bot_config import config
+from src.handlers.prediction import describe_handler, predict_handler, search_handler
 from src.handlers.rate import (
     callbacks_num_change_fab,
     get_rating_keyboard,
     rate_bot,
     update_rating,
 )
+from src.handlers.welcome import (
+    donate_handler,
+    message_about,
+    message_info,
+    message_redicrect,
+    start_handler,
+)
+from src.text import TEXT_ABOUT, TEXT_FOR_INFO
 from src.utils import preprocess_string
 
 
@@ -29,6 +38,32 @@ def test_songs():
             "genres": ["chicago rap", "hip hop", "rap"],
             "popularity": 85,
             "href": "https://open.spotify.com/track/0j2T0R9dR9qdJYsB7ciXhf",
+        },
+    ]
+
+
+@pytest.fixture
+def test_predict_songs():
+    return [
+        {
+            "artist_name": ["G-Eazy"],
+            "track_name": "Me, Myself & I",
+            "href": "https://open.spotify.com/track/40YcuQysJ0KlGQTeGUosTC",
+        },
+        {
+            "artist_name": ["Amy Winehouse"],
+            "track_name": "Tears Dry On Their Own",
+            "href": "https://open.spotify.com/track/7MDfN1ldfTMtuXXdVz2Pzc",
+        },
+        {
+            "artist_name": ["Alice In Chains"],
+            "track_name": "Heaven Beside You",
+            "href": "https://open.spotify.com/track/1DCdIWCE5UFiObCsTSpKFv",
+        },
+        {
+            "artist_name": ["Palaye Royale"],
+            "track_name": "Lonely",
+            "href": "https://open.spotify.com/track/4jXbcY2ulVT7MOPdN8nR50",
         },
     ]
 
@@ -89,15 +124,73 @@ def search_test_output(test_songs):
 
 
 @pytest.fixture
+def predict_test_output(test_predict_songs):
+    content = as_list(
+        Bold("<b>Here is your playlist:</b>"),
+        as_marked_list(
+            *[
+                hlink(f"{song['artist_name'][0]} - {song['track_name']}", song["href"])
+                for song in test_predict_songs
+            ],
+            marker="🎼 ",
+        ),
+        sep="\n\n",
+    )
+
+    return content.as_kwargs(parse_mode_key=ParseMode.HTML)
+
+
+@pytest.fixture
 def message_mock():
-    user_mock = AsyncMock(id="123")
+    user_mock = AsyncMock(id="123", full_name="Kanye East")
     return AsyncMock(from_user=user_mock)
 
 
 @pytest.fixture
 def callback_mock(message_mock):
-    user_mock = AsyncMock(id="123")
+    user_mock = AsyncMock(id="123", full_name="Kanye East")
     return AsyncMock(from_user=user_mock, message=message_mock)
+
+
+@pytest.mark.asyncio
+async def test_start_handler(message_mock):
+    target_response = Text(
+        "Hello ",
+        message_mock.from_user.full_name,
+        "! Learn what can I do by writting /info.",
+    )
+    await start_handler(message=message_mock)
+    message_mock.answer.assert_called_with(**target_response.as_kwargs())
+
+
+@pytest.mark.asyncio
+async def test_message_info(message_mock):
+    target_response = TEXT_FOR_INFO
+    await message_info(message=message_mock)
+    message_mock.answer.assert_called_with(**Text(target_response).as_kwargs())
+
+
+@pytest.mark.asyncio
+async def test_message_about(message_mock):
+    target_response = TEXT_ABOUT
+    await message_about(message=message_mock)
+    message_mock.answer.assert_called_with(target_response)
+
+
+@pytest.mark.asyncio
+async def test_message_redicrect(message_mock):
+    target_response = (
+        f"Use the full version of Playlist Selection service on: \n {config.service_uri}"
+    )
+    await message_redicrect(message=message_mock)
+    message_mock.answer.assert_called_with(target_response)
+
+
+@pytest.mark.asyncio
+async def test_donate_handler(message_mock):
+    target_response = "Not available yet, save your money!"
+    await donate_handler(message=message_mock)
+    message_mock.answer.assert_called_with(target_response)
 
 
 @pytest.mark.asyncio
@@ -180,6 +273,18 @@ async def test_describe_handler(mock_api_call, message_mock, description_test_ou
 
 @pytest.mark.asyncio
 @patch("src.handlers.prediction.api_call")
+async def test_describe_handler_error(mock_api_call, message_mock):
+    query = "Kanye West - Stronger"
+    command_mock = AsyncMock(args=query)
+
+    mock_api_call.side_effect = ValueError("Error")
+    await describe_handler(message=message_mock, command=command_mock)
+
+    message_mock.answer.assert_called_with("Error")
+
+
+@pytest.mark.asyncio
+@patch("src.handlers.prediction.api_call")
 async def test_search_handler(mock_api_call, message_mock, search_test_output):
     query = "Kanye West - Stronger"
     command_mock = AsyncMock(args=query)
@@ -201,3 +306,62 @@ async def test_search_handler(mock_api_call, message_mock, search_test_output):
 
     mock_api_call.assert_called_with("api/search", user_songs)
     message_mock.answer.assert_called_with(**search_test_output)
+
+
+@pytest.mark.asyncio
+@patch("src.handlers.prediction.api_call")
+async def test_search_handler_error(mock_api_call, message_mock):
+    query = "Kanye West - Stronger"
+    command_mock = AsyncMock(args=query)
+
+    mock_api_call.side_effect = ValueError("Error")
+    await search_handler(message=message_mock, command=command_mock)
+
+    message_mock.answer.assert_called_with("Error")
+
+
+@pytest.mark.asyncio
+@patch("src.handlers.prediction.api_call")
+async def test_predict_handler(mock_api_call, message_mock, predict_test_output):
+    query = "Kanye West - Stronger"
+    command_mock = AsyncMock(args=query)
+    user_songs = {"song_list": preprocess_string(command_mock.args)}
+
+    mock_api_call.return_value = [
+        {
+            "artist_name": ["G-Eazy"],
+            "track_name": "Me, Myself & I",
+            "href": "https://open.spotify.com/track/40YcuQysJ0KlGQTeGUosTC",
+        },
+        {
+            "artist_name": ["Amy Winehouse"],
+            "track_name": "Tears Dry On Their Own",
+            "href": "https://open.spotify.com/track/7MDfN1ldfTMtuXXdVz2Pzc",
+        },
+        {
+            "artist_name": ["Alice In Chains"],
+            "track_name": "Heaven Beside You",
+            "href": "https://open.spotify.com/track/1DCdIWCE5UFiObCsTSpKFv",
+        },
+        {
+            "artist_name": ["Palaye Royale"],
+            "track_name": "Lonely",
+            "href": "https://open.spotify.com/track/4jXbcY2ulVT7MOPdN8nR50",
+        },
+    ]
+    await predict_handler(message=message_mock, command=command_mock)
+
+    mock_api_call.assert_called_with("api/generate", user_songs)
+    message_mock.answer.assert_called_with(**predict_test_output)
+
+
+@pytest.mark.asyncio
+@patch("src.handlers.prediction.api_call")
+async def test_predict_handler_error(mock_api_call, message_mock):
+    query = "Kanye West - Stronger"
+    command_mock = AsyncMock(args=query)
+
+    mock_api_call.side_effect = ValueError("Error")
+    await predict_handler(message=message_mock, command=command_mock)
+
+    message_mock.answer.assert_called_with("Error")
