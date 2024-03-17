@@ -35,7 +35,7 @@ async def get_request(api_path: str):
         full_url = os.path.join(str(config.service_uri), api_path)
         async with session.get(url=full_url) as response:
             if not response.ok:
-                raise ValueError("Sorry, we couldn't find your song.")
+                raise ValueError("Sorry, error.")
             request = await response.json()
     return request
 

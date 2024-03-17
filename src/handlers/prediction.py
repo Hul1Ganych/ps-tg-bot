@@ -32,11 +32,11 @@ async def predict_handler(message: types.Message, command: CommandObject):
         return
 
     request = await get_request(f"requests/{request_id}")
-    while request["status"] not in ("COMPLETED", "FAILED"):
+    while request["status"] not in ("completed", "failed"):
         await asyncio.sleep(30)
-        request = await get_request("requests/{request_id}")
+        request = await get_request(f"requests/{request_id}")
         
-    if request["status"] == "FAILED":
+    if request["status"] == "failed":
         await message.answer("Your request is failed.")
         return
 
