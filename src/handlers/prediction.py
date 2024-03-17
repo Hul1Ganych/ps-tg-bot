@@ -1,5 +1,6 @@
 """Handler for prediction."""
 
+import asyncio
 from aiogram import F, Router, types
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.filters import Command
@@ -7,7 +8,7 @@ from aiogram.filters.command import CommandObject
 from aiogram.utils.formatting import Bold, Text, as_list, as_marked_list
 from aiogram.utils.markdown import hlink
 
-from src.utils import api_call, preprocess_string
+from src.utils import api_call, get_request, preprocess_string
 
 
 router = Router()
@@ -25,11 +26,21 @@ async def predict_handler(message: types.Message, command: CommandObject):
         dict_from_message = {
             "song_list": preprocess_string(command.args),
         }
-        songs = await api_call("api/generate", dict_from_message)
+        request_id = await api_call("api/generate", dict_from_message)
     except ValueError as err:
         await message.answer(str(err))
         return
 
+    request = await get_request(f"requests/{request_id}")
+    while request["status"] not in ("COMPLETED", "FAILED"):
+        await asyncio.sleep(30)
+        request = await get_request("requests/{request_id}")
+        
+    if request["status"] == "FAILED":
+        await message.answer("Your request is failed.")
+        return
+
+    songs = request.get("songs", [])
     content = as_list(
         Bold("<b>Here is your playlist:</b>"),
         as_marked_list(

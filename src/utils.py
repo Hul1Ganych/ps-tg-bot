@@ -30,6 +30,15 @@ async def api_call(api_path: str, params: Dict[str, str]):
     return songs
 
 
+async def get_request(api_path: str):
+    async with aiohttp.ClientSession() as session:
+        full_url = os.path.join(str(config.service_uri), api_path)
+        async with session.get(url=full_url) as response:
+            if not response.ok:
+                raise ValueError("Sorry, we couldn't find your song.")
+            request = await response.json()
+    return request
+
 def preprocess_string(query_string: str) -> List[Dict[str, str]]:
     """
     Prepare user's message.
